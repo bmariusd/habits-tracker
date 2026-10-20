@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/apps/" />
+  <Folder Name="/apps/api/">
+    <Project Path="apps/api/Habits.Api/Habits.Api.csproj" />
+  </Folder>
+  <Folder Name="/libs/" />
+  <Folder Name="/libs/backend/">
+    <Project Path="libs/backend/Habits.Application/Habits.Application.csproj" />
+    <Project Path="libs/backend/Habits.Domain/Habits.Domain.csproj" />
+    <Project Path="libs/backend/Habits.Infrastructure/Habits.Infrastructure.csproj" />
+  </Folder>
+</Solution>
