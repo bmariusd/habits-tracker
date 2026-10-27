@@ -60,6 +60,11 @@ export type HabitProgressDto = {
     }
 );
 
+export type HabitDayDto = HabitProgressDto & {
+  name: string;
+  description: string | null;
+};
+
 export interface CalendarDaySummaryDto {
   date: HabitDate;
   totalHabits: number;
@@ -74,6 +79,7 @@ export interface HabitFacade {
   updateHabit(id: string, input: UpdateHabitRequest): Promise<HabitDto>;
   archiveHabit(id: string): Promise<void>;
   recordProgress(input: RecordHabitProgressRequest): Promise<HabitProgressDto>;
+  getProgressForDate(date: HabitDate): Promise<HabitDayDto[]>;
   getCalendarSummary(
     startDate: HabitDate,
     endDate: HabitDate,

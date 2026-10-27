@@ -2,6 +2,7 @@ import type {
   CalendarDaySummaryDto,
   CreateHabitRequest,
   HabitDate,
+  HabitDayDto,
   HabitDto,
   HabitFacade,
   HabitProgressDto,
@@ -50,5 +51,11 @@ export class HttpHabitFacade implements HabitFacade {
     const query = new URLSearchParams({ startDate, endDate });
 
     return this.apiClient.get(`/calendar/summary?${query.toString()}`);
+  }
+
+  getProgressForDate(date: HabitDate): Promise<HabitDayDto[]> {
+    const query = new URLSearchParams({ date });
+
+    return this.apiClient.get(`/habits/progress?${query.toString()}`);
   }
 }

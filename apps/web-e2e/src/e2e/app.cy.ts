@@ -1,13 +1,12 @@
-import { getGreeting } from '../support/app.po';
+import { getDashboardTitle } from '../support/app.po';
 
 describe('@org/web-e2e', () => {
   beforeEach(() => cy.visit('/'));
 
-  it('should display welcome message', () => {
-    // Custom command example, see `../support/commands.ts` file
-    cy.login('my-email@something.com', 'myPassword');
-
-    // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains(/Welcome/);
+  it('shows the habits dashboard and working navigation', () => {
+    getDashboardTitle().should('contain.text', 'Good things take practice');
+    cy.get('nav[aria-label="Main navigation"] a').should('have.length', 3);
+    cy.contains('h2', 'My habits').should('be.visible');
+    cy.contains('h2', 'Activity').should('be.visible');
   });
 });

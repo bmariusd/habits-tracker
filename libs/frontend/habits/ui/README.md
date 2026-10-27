@@ -1,7 +1,5 @@
-# @org/ui
+# Habits UI
 
-This library was generated with [Nx](https://nx.dev).
+This library contains reusable presentation components shared by the habits feature, including `Button`, `Modal`, and `GlassPanel`.
 
-## Running unit tests
-
-Run `nx test @org/ui` to execute the unit tests via [Jest](https://jestjs.io).
+These components handle appearance and basic accessibility. The feature that uses them owns application data and behavior.

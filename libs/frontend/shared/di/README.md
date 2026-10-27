@@ -1,7 +1,5 @@
-# @org/di
+# React dependency injection
 
-This library was generated with [Nx](https://nx.dev).
+This library provides `DIProvider` and `useInjection`, a small bridge between React and Inversify.
 
-## Running unit tests
-
-Run `nx test @org/di` to execute the unit tests via [Jest](https://jestjs.io).
+The app registers concrete services in `apps/web/src/app/container.ts` and provides that container near the root of the React tree. Feature components request interfaces through tokens instead of constructing HTTP clients themselves.

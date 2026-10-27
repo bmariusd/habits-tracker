@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@org/contracts": "workspace:*",
-    "@org/di": "workspace:*"
+    "@org/di": "workspace:*",
+    "@org/ui": "workspace:*"
   }
 }

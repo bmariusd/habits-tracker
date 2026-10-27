@@ -13,9 +13,6 @@
       "path": "./libs/frontend/habits/contracts"
     },
     {
-      "path": "./libs/frontend/habits/core"
-    },
-    {
       "path": "./libs/frontend/habits/data-access"
     },
     {

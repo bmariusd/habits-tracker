@@ -74,7 +74,12 @@
   "analytics": false,
   "targetDefaults": {
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "options": {
+        "env": {
+          "TS_NODE_COMPILER_OPTIONS": "{\"rootDir\":\".\",\"moduleResolution\":\"node10\",\"module\":\"commonjs\",\"customConditions\":null,\"ignoreDeprecations\":\"6.0\"}"
+        }
+      }
     }
   },
   "generators": {

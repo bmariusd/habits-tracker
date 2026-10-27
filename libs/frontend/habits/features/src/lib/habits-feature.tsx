@@ -1,57 +1,106 @@
-import { HabitFacade, type HabitDto } from '@org/contracts';
-import { useInjection } from '@org/di';
-import { useEffect, useState } from 'react';
+import type { CreateHabitRequest, HabitDto } from '@org/contracts';
+import { useState } from 'react';
+import { ArchiveHabitDialog } from './dialogs/archive-habit-dialog';
+import { HabitFormDialog } from './dialogs/habit-form-dialog';
+import { HabitsDashboard } from './dashboard/habits-dashboard';
+import { useHabits } from './hooks/use-habits';
+import type { ActiveDialog } from './habits-feature.types';
 
 export function HabitsFeature() {
-  const habitFacade = useInjection<HabitFacade>(HabitFacade.$);
-  const [habits, setHabits] = useState<HabitDto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    habits,
+    isLoading,
+    loadError,
+    isSaving,
+    isArchiving,
+    mutationError,
+    clearMutationError,
+    createHabit,
+    updateHabit,
+    archiveHabit,
+  } = useHabits();
+  const [activeDialog, setActiveDialog] = useState<ActiveDialog>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
+  function openCreateDialog() {
+    clearMutationError();
+    setSuccessMessage(null);
+    setActiveDialog({ mode: 'create' });
+  }
 
-    habitFacade
-      .listHabits()
-      .then((result) => {
-        if (!Array.isArray(result)) {
-          throw new Error('Expected /api/habits to return a JSON array.');
-        }
+  function openEditDialog(habit: HabitDto) {
+    clearMutationError();
+    setSuccessMessage(null);
+    setActiveDialog({ mode: 'edit', habit });
+  }
 
-        if (!cancelled) setHabits(result);
-      })
-      .catch((reason: unknown) => {
-        if (cancelled) return;
+  function openArchiveDialog(habit: HabitDto) {
+    clearMutationError();
+    setSuccessMessage(null);
+    setActiveDialog({ mode: 'archive', habit });
+  }
 
-        setError(
-          reason instanceof Error ? reason.message : 'Could not load habits.',
-        );
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
+  function closeDialog() {
+    setActiveDialog(null);
+  }
 
-    return () => {
-      cancelled = true;
-    };
-  }, [habitFacade]);
+  async function handleSaveHabit(input: CreateHabitRequest) {
+    const dialog = activeDialog;
+    const wasSaved = dialog?.mode === 'edit'
+      ? await updateHabit(dialog.habit.id, input)
+      : await createHabit(input);
 
-  if (isLoading) return <p>Loading habits…</p>;
-  if (error) return <p role="alert">Could not load habits: {error}</p>;
-  if (habits.length === 0) return <p>No active habits yet.</p>;
+    if (!wasSaved) return;
+
+    setSuccessMessage(dialog?.mode === 'edit' ? 'Habit updated.' : 'Habit created.');
+    closeDialog();
+  }
+
+  async function handleArchiveHabit() {
+    if (activeDialog?.mode !== 'archive') return;
+
+    const wasArchived = await archiveHabit(activeDialog.habit.id);
+    if (!wasArchived) return;
+
+    setSuccessMessage('Habit archived. Its history has been kept.');
+    closeDialog();
+  }
+
+  const formHabit = activeDialog?.mode === 'edit' ? activeDialog.habit : null;
+  const archiveHabitToConfirm = activeDialog?.mode === 'archive'
+    ? activeDialog.habit
+    : null;
+  const isFormOpen = activeDialog?.mode === 'create' || activeDialog?.mode === 'edit';
 
   return (
-    <section>
-      <h1>My habits</h1>
-      <ul>
-        {habits.map((habit) => (
-          <li key={habit.id}>
-            {habit.name}
-            {habit.trackingType === 'quantity' &&
-              ` — target: ${habit.targetValue} ${habit.unit}`}
-          </li>
-        ))}
-      </ul>
-    </section>
+    <>
+      <HabitsDashboard
+        habits={habits}
+        isLoading={isLoading}
+        loadError={loadError}
+        successMessage={successMessage}
+        onAddHabit={openCreateDialog}
+        onEditHabit={openEditDialog}
+        onDeleteHabit={openArchiveDialog}
+      />
+
+      <HabitFormDialog
+        open={isFormOpen}
+        habit={formHabit}
+        isSaving={isSaving}
+        error={mutationError}
+        onClose={closeDialog}
+        onSubmit={handleSaveHabit}
+      />
+
+      <ArchiveHabitDialog
+        open={archiveHabitToConfirm !== null}
+        habit={archiveHabitToConfirm}
+        isArchiving={isArchiving}
+        error={mutationError}
+        onClose={closeDialog}
+        onConfirm={handleArchiveHabit}
+      />
+    </>
   );
 }

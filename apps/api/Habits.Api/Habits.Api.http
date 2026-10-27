@@ -1,6 +1,60 @@
 @Habits.Api_HostAddress = http://localhost:5023
+@habitId = replace-with-id-from-create-response
+@date = 2026-10-26
 
-GET {{Habits.Api_HostAddress}}/weatherforecast/
+### List active habits
+GET {{Habits.Api_HostAddress}}/api/habits
 Accept: application/json
 
-###
+### Create a completion habit
+POST {{Habits.Api_HostAddress}}/api/habits
+Content-Type: application/json
+
+{
+  "name": "Stretch",
+  "description": "Stretch for five minutes",
+  "trackingType": "completion",
+  "targetValue": null,
+  "unit": null
+}
+
+### Get one active habit
+GET {{Habits.Api_HostAddress}}/api/habits/{{habitId}}
+Accept: application/json
+
+### Edit the habit (PUT replaces all editable fields)
+PUT {{Habits.Api_HostAddress}}/api/habits/{{habitId}}
+Content-Type: application/json
+
+{
+  "name": "Morning stretch",
+  "description": "Stretch for ten minutes",
+  "trackingType": "completion",
+  "targetValue": null,
+  "unit": null
+}
+
+### Archive the habit (soft delete)
+DELETE {{Habits.Api_HostAddress}}/api/habits/{{habitId}}
+
+### Archived habits no longer appear in the active list
+GET {{Habits.Api_HostAddress}}/api/habits
+Accept: application/json
+
+### Get habits and their saved progress for a date
+GET {{Habits.Api_HostAddress}}/api/habits/progress?date={{date}}
+Accept: application/json
+
+### Mark a completion habit done on that date
+POST {{Habits.Api_HostAddress}}/api/habits/{{habitId}}/progress
+Content-Type: application/json
+
+{
+  "date": "{{date}}",
+  "trackingType": "completion",
+  "completed": true
+}
+
+### Read the calendar completion totals for a date range
+GET {{Habits.Api_HostAddress}}/api/calendar/summary?startDate={{date}}&endDate={{date}}
+Accept: application/json

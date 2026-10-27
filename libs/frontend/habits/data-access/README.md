@@ -1,7 +1,5 @@
-# data-access
+# Habits data access
 
-This library was generated with [Nx](https://nx.dev).
+This library implements the `HabitFacade` from `@org/contracts` with Axios. Feature hooks call the facade; the facade sends requests to the API under `/api`.
 
-## Running unit tests
-
-Run `nx test data-access` to execute the unit tests via [Jest](https://jestjs.io).
+The Vite proxy in `apps/web/vite.config.mts` forwards those requests to the local API at `http://localhost:5023`.

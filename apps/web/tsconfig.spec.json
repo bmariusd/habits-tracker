@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/jest",
+    "lib": ["es2022", "dom", "dom.iterable"],
     "jsx": "react-jsx",
     "types": [
       "jest",
